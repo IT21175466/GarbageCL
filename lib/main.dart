@@ -1,15 +1,22 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:garbagecl/screens/authentication/login_screen.dart';
 import 'package:garbagecl/screens/splash_screen/init_splash.dart';
+import 'package:garbagecl/screens/user_home/user_home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final loginStatus = prefs.getBool('logedIn') ?? false;
+
+  runApp(MyApp(loginStatus: loginStatus));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool loginStatus;
+  const MyApp({super.key, required this.loginStatus});
 
   // This widget is the root of your application.
   @override
@@ -35,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: InitialSplash(),
+      home: loginStatus ? UserHomePage() : InitialSplash(),
     );
   }
 }
