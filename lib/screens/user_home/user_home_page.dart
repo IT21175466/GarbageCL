@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:garbagecl/screens/user_home/tabs/add_garbage_tab.dart';
 import 'package:garbagecl/screens/user_home/tabs/home_tab.dart';
+import 'package:garbagecl/screens/user_home/tabs/my_garbage_tab.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -23,9 +24,7 @@ class _UserHomePageState extends State<UserHomePage> {
   final List<Widget> pages = [
     HomeTab(),
     AddGarbageTab(),
-    Container(
-      child: Text("My Garbage"),
-    ),
+    MyGarbageTab(),
     Container(
       child: Text("Profile"),
     )
