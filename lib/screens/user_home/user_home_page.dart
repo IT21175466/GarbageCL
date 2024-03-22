@@ -5,6 +5,7 @@ import 'package:garbagecl/providers/user_provider.dart';
 import 'package:garbagecl/screens/user_home/tabs/add_garbage_tab.dart';
 import 'package:garbagecl/screens/user_home/tabs/home_tab.dart';
 import 'package:garbagecl/screens/user_home/tabs/my_garbage_tab.dart';
+import 'package:garbagecl/screens/user_home/tabs/user_profile_tab.dart';
 import 'package:provider/provider.dart';
 
 class UserHomePage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _UserHomePageState extends State<UserHomePage> {
     super.initState();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.getUserID();
+    userProvider.getUserData(context);
   }
 
   int _currentIndex = 0;
@@ -34,9 +36,7 @@ class _UserHomePageState extends State<UserHomePage> {
     HomeTab(),
     AddGarbageTab(),
     MyGarbageTab(),
-    Container(
-      child: Text("Profile"),
-    )
+    UserProfile(),
   ];
 
   @override
