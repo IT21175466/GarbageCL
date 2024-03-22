@@ -22,13 +22,13 @@ class _UserHomePageState extends State<UserHomePage> {
   final List<Widget> pages = [
     HomeTab(),
     Container(
-      child: Text("Quizzes"),
+      child: Text("Add"),
     ),
     Container(
-      child: Text("Notifications"),
+      child: Text("My Garbage"),
     ),
     Container(
-      child: Text("Settings"),
+      child: Text("Profile"),
     )
   ];
 
@@ -95,21 +95,21 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.question_answer,
+                Icons.add_circle,
               ),
-              label: "Quizes",
+              label: "Add",
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.notifications,
+                Icons.list,
               ),
-              label: "Notifications",
+              label: "My Garbage",
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.settings,
+                Icons.account_circle_rounded,
               ),
-              label: "Settings",
+              label: "Profile",
             ),
           ],
           showSelectedLabels: true,

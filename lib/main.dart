@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:garbagecl/screens/authentication/login_screen.dart';
 import 'package:garbagecl/screens/splash_screen/init_splash.dart';
 import 'package:garbagecl/screens/user_home/user_home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
