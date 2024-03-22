@@ -1,18 +1,93 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:garbagecl/models/garbage.dart';
 import 'package:garbagecl/widgets/custom_button.dart';
 
 class UpdateGarbage extends StatefulWidget {
-  const UpdateGarbage({super.key});
+  final int plastic;
+  final int metal;
+  final int glass;
+  final int organic;
+  final String status;
+  final String garbageiD;
+  final String useriD;
+  const UpdateGarbage(
+      {super.key,
+      required this.plastic,
+      required this.metal,
+      required this.glass,
+      required this.organic,
+      required this.status,
+      required this.garbageiD,
+      required this.useriD});
 
   @override
   State<UpdateGarbage> createState() => _UpdateGarbageState();
 }
 
 class _UpdateGarbageState extends State<UpdateGarbage> {
+  int plasticA = 0;
+  int metalA = 0;
+  int glassA = 0;
+  int organicA = 0;
+  String? statusA;
+  String? garbageiDA;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      plasticA = widget.plastic;
+      metalA = widget.metal;
+      glassA = widget.glass;
+      organicA = widget.organic;
+      statusA = widget.status;
+      garbageiDA = widget.garbageiD;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+    final db = FirebaseFirestore.instance;
+
+    void updateGarbageRequest(Garbage garbage, String garbageID,
+        BuildContext context, String userID) async {
+      setState(() {
+        //loading = true;
+      });
+
+      try {
+        db
+            .collection("User_Garbages")
+            .doc(userID)
+            .collection('Garbages')
+            .doc(garbageID)
+            .update(garbage.toJson());
+
+        db.collection("Garbages").doc(garbageID).update(garbage.toJson());
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sucessfully Updated"),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      } finally {
+        Navigator.pop(context);
+        setState(() {
+          //loading = false;
+        });
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -73,13 +148,30 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                         color: Color.fromARGB(255, 151, 151, 148)),
                   ),
                   Spacer(),
-                  SizedBox(
-                      height: 20, child: Image.asset('assets/images/plus.png')),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (organicA >= 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          organicA = organicA + 1;
+                        }
+                      });
+                    },
+                    child: SizedBox(
+                        height: 20,
+                        child: Image.asset('assets/images/plus.png')),
+                  ),
 
                   SizedBox(width: 10),
 
                   Text(
-                    "1",
+                    "$organicA",
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Poppins',
@@ -87,9 +179,25 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                   ),
                   SizedBox(width: 10),
 
-                  Image.asset(
-                    'assets/images/minus.png',
-                    height: 20,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (organicA < 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          organicA = organicA - 1;
+                        }
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/minus.png',
+                      height: 20,
+                    ),
                   ),
                 ],
               ),
@@ -122,13 +230,30 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                         color: Color.fromARGB(255, 151, 151, 148)),
                   ),
                   Spacer(),
-                  SizedBox(
-                      height: 20, child: Image.asset('assets/images/plus.png')),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (plasticA >= 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          plasticA = plasticA + 1;
+                        }
+                      });
+                    },
+                    child: SizedBox(
+                        height: 20,
+                        child: Image.asset('assets/images/plus.png')),
+                  ),
 
                   SizedBox(width: 10),
 
                   Text(
-                    "1",
+                    "$plasticA",
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Poppins',
@@ -136,9 +261,25 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                   ),
                   SizedBox(width: 10),
 
-                  Image.asset(
-                    'assets/images/minus.png',
-                    height: 20,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (plasticA < 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          plasticA = plasticA - 1;
+                        }
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/minus.png',
+                      height: 20,
+                    ),
                   ),
                 ],
               ),
@@ -171,13 +312,30 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                         color: Color.fromARGB(255, 151, 151, 148)),
                   ),
                   Spacer(),
-                  SizedBox(
-                      height: 20, child: Image.asset('assets/images/plus.png')),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (metalA >= 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          metalA = metalA + 1;
+                        }
+                      });
+                    },
+                    child: SizedBox(
+                        height: 20,
+                        child: Image.asset('assets/images/plus.png')),
+                  ),
 
                   SizedBox(width: 10),
 
                   Text(
-                    "1",
+                    "$metalA",
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Poppins',
@@ -185,9 +343,25 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                   ),
                   SizedBox(width: 10),
 
-                  Image.asset(
-                    'assets/images/minus.png',
-                    height: 20,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (metalA < 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          metalA = metalA - 1;
+                        }
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/minus.png',
+                      height: 20,
+                    ),
                   ),
                 ],
               ),
@@ -220,13 +394,30 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                         color: Color.fromARGB(255, 151, 151, 148)),
                   ),
                   Spacer(),
-                  SizedBox(
-                      height: 20, child: Image.asset('assets/images/plus.png')),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (glassA >= 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          glassA = glassA + 1;
+                        }
+                      });
+                    },
+                    child: SizedBox(
+                        height: 20,
+                        child: Image.asset('assets/images/plus.png')),
+                  ),
 
                   SizedBox(width: 10),
 
                   Text(
-                    "1",
+                    "$glassA",
                     style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Poppins',
@@ -234,19 +425,52 @@ class _UpdateGarbageState extends State<UpdateGarbage> {
                   ),
                   SizedBox(width: 10),
 
-                  Image.asset(
-                    'assets/images/minus.png',
-                    height: 20,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (glassA < 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please enter vaild quantity!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          glassA = glassA - 1;
+                        }
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/minus.png',
+                      height: 20,
+                    ),
                   ),
                 ],
               ),
             ),
             SizedBox(height: 15),
-            CustomButton(
-              text: "UPDATE",
-              height: 50,
-              width: screenWidth,
-              backgroundColor: Colors.green,
+            GestureDetector(
+              onTap: () {
+                Garbage garbage = Garbage(
+                  userID: widget.useriD,
+                  garbageID: widget.garbageiD,
+                  plastic: plasticA,
+                  metal: metalA,
+                  glass: glassA,
+                  organic: organicA,
+                  date: DateTime.now(),
+                  status: widget.status,
+                );
+
+                updateGarbageRequest(
+                    garbage, widget.garbageiD, context, widget.useriD);
+              },
+              child: CustomButton(
+                text: "UPDATE",
+                height: 50,
+                width: screenWidth,
+                backgroundColor: Colors.green,
+              ),
             ),
             SizedBox(height: 15),
           ],

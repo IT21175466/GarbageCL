@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:garbagecl/providers/user_provider.dart';
 import 'package:garbagecl/screens/user_home/tabs/add_garbage_tab.dart';
 import 'package:garbagecl/screens/user_home/tabs/home_tab.dart';
 import 'package:garbagecl/screens/user_home/tabs/my_garbage_tab.dart';
+import 'package:provider/provider.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -13,6 +15,13 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.getUserID();
+  }
+
   int _currentIndex = 0;
 
   void _onItemTapped(int index) {

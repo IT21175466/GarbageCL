@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:garbagecl/models/garbage.dart';
 import 'package:garbagecl/widgets/custom_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class AddGarbageTab extends StatefulWidget {
   const AddGarbageTab({super.key});
@@ -9,6 +13,72 @@ class AddGarbageTab extends StatefulWidget {
 }
 
 class _AddGarbageTabState extends State<AddGarbageTab> {
+  int organic = 0;
+  int plastic = 0;
+  int metals = 0;
+  int glass = 0;
+
+  bool loading = false;
+
+  String? userID = '';
+  String? garbageID = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+    generateGarbageID();
+  }
+
+  getUserID() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userID = prefs.getString('userID');
+    });
+  }
+
+  generateGarbageID() {
+    setState(() {
+      garbageID = Uuid().v4();
+    });
+  }
+
+  final db = FirebaseFirestore.instance;
+
+  void addGarbageRequest(Garbage garbage, String garbageID,
+      BuildContext context, String userID) async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      db
+          .collection("User_Garbages")
+          .doc(userID)
+          .collection('Garbages')
+          .doc(garbageID)
+          .set(garbage.toJson());
+
+      db.collection("Garbages").doc(garbageID).set(garbage.toJson());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Sucessfully Added"),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -92,13 +162,29 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                       color: Color.fromARGB(255, 151, 151, 148)),
                 ),
                 Spacer(),
-                SizedBox(
-                    height: 20, child: Image.asset('assets/images/plus.png')),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (organic >= 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        organic = organic + 1;
+                      }
+                    });
+                  },
+                  child: SizedBox(
+                      height: 20, child: Image.asset('assets/images/plus.png')),
+                ),
 
                 SizedBox(width: 10),
 
                 Text(
-                  "1",
+                  "$organic",
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
@@ -106,9 +192,25 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                 ),
                 SizedBox(width: 10),
 
-                Image.asset(
-                  'assets/images/minus.png',
-                  height: 20,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (organic < 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        organic = organic - 1;
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    'assets/images/minus.png',
+                    height: 20,
+                  ),
                 ),
               ],
             ),
@@ -141,13 +243,29 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                       color: Color.fromARGB(255, 151, 151, 148)),
                 ),
                 Spacer(),
-                SizedBox(
-                    height: 20, child: Image.asset('assets/images/plus.png')),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (plastic >= 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        plastic = plastic + 1;
+                      }
+                    });
+                  },
+                  child: SizedBox(
+                      height: 20, child: Image.asset('assets/images/plus.png')),
+                ),
 
                 SizedBox(width: 10),
 
                 Text(
-                  "1",
+                  "$plastic",
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
@@ -155,9 +273,25 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                 ),
                 SizedBox(width: 10),
 
-                Image.asset(
-                  'assets/images/minus.png',
-                  height: 20,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (plastic < 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        plastic = plastic - 1;
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    'assets/images/minus.png',
+                    height: 20,
+                  ),
                 ),
               ],
             ),
@@ -190,13 +324,29 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                       color: Color.fromARGB(255, 151, 151, 148)),
                 ),
                 Spacer(),
-                SizedBox(
-                    height: 20, child: Image.asset('assets/images/plus.png')),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (metals >= 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        metals = metals + 1;
+                      }
+                    });
+                  },
+                  child: SizedBox(
+                      height: 20, child: Image.asset('assets/images/plus.png')),
+                ),
 
                 SizedBox(width: 10),
 
                 Text(
-                  "1",
+                  "$metals",
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
@@ -204,9 +354,25 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                 ),
                 SizedBox(width: 10),
 
-                Image.asset(
-                  'assets/images/minus.png',
-                  height: 20,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (metals < 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        metals = metals - 1;
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    'assets/images/minus.png',
+                    height: 20,
+                  ),
                 ),
               ],
             ),
@@ -239,13 +405,29 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                       color: Color.fromARGB(255, 151, 151, 148)),
                 ),
                 Spacer(),
-                SizedBox(
-                    height: 20, child: Image.asset('assets/images/plus.png')),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (glass >= 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        glass = glass + 1;
+                      }
+                    });
+                  },
+                  child: SizedBox(
+                      height: 20, child: Image.asset('assets/images/plus.png')),
+                ),
 
                 SizedBox(width: 10),
 
                 Text(
-                  "1",
+                  "$glass",
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
@@ -253,19 +435,74 @@ class _AddGarbageTabState extends State<AddGarbageTab> {
                 ),
                 SizedBox(width: 10),
 
-                Image.asset(
-                  'assets/images/minus.png',
-                  height: 20,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (glass < 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter vaild quantity!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        glass = glass - 1;
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    'assets/images/minus.png',
+                    height: 20,
+                  ),
                 ),
               ],
             ),
           ),
           SizedBox(height: 15),
-          CustomButton(
-            text: "ADD",
-            height: 50,
-            width: screenWidth,
-            backgroundColor: Colors.green,
+          GestureDetector(
+            onTap: () {
+              try {
+                setState(() {
+                  loading = true;
+                });
+
+                Garbage garbage = Garbage(
+                  userID: userID!,
+                  garbageID: garbageID!,
+                  plastic: plastic,
+                  metal: metals,
+                  glass: glass,
+                  organic: organic,
+                  date: DateTime.now(),
+                  status: 'Pending',
+                );
+
+                addGarbageRequest(garbage, garbageID!, context, userID!);
+              } catch (e) {
+                print(e);
+              } finally {
+                setState(() {
+                  plastic = 0;
+                  organic = 0;
+                  metals = 0;
+                  glass = 0;
+                });
+              }
+            },
+            child: loading
+                ? Container(
+                    height: 50,
+                    width: screenWidth,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : CustomButton(
+                    text: "ADD",
+                    height: 50,
+                    width: screenWidth,
+                    backgroundColor: Colors.green,
+                  ),
           ),
           SizedBox(height: 15),
         ],
