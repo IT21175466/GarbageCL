@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:garbagecl/providers/user_provider.dart';
-import 'package:garbagecl/screens/user_home/user_home_page.dart';
+import 'package:garbagecl/screens/splash_screen/loading_splash.dart';
 import 'package:provider/provider.dart';
 
 class DataLoadSplash extends StatefulWidget {
@@ -24,7 +24,7 @@ class _DataLoadSplashState extends State<DataLoadSplash> {
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => UserHomePage(),
+          builder: (context) => LoadingSplash(id: userProvider.userID!),
         ),
       ),
     );
