@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:garbagecl/screens/authentication/otp_screen.dart';
+import 'package:garbagecl/widgets/custom_button.dart';
 import 'package:garbagecl/widgets/phone_textfiled.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,17 +15,61 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phoneController = TextEditingController();
 
+  bool loading = false;
+
   String selectedDate = '';
   final countryPicker = const FlCountryCodePicker();
   CountryCode? countryCode;
 
   selectCountry(BuildContext context) async {
-    setState(() async {
-      countryCode = await countryPicker.showPicker(
-        pickerMinHeight: 30,
-        context: context,
-      );
+    final countryC = await countryPicker.showPicker(
+      pickerMinHeight: 30,
+      context: context,
+    );
+
+    setState(() {
+      countryCode = countryC;
     });
+  }
+
+  verifyPhoneNumber(String phone, BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {},
+        verificationFailed: (FirebaseAuthException ex) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(ex.message.toString()),
+            ),
+          );
+          print(ex.message.toString());
+          setState(() {
+            loading = false;
+          });
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                mobileNumber: (countryCode?.dialCode ?? '') +
+                    (' ') +
+                    phoneController.text,
+                verificationID: verificationId,
+              ),
+            ),
+          );
+
+          setState(() {
+            loading = false;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+        phoneNumber: countryCode!.dialCode + phone,
+      );
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -45,11 +92,13 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 200,
               child: Image.asset('assets/images/garbagecl_green.png'),
             ),
+            Spacer(),
             SizedBox(
               height: 200,
               //width: 150,
               child: Image.asset('assets/images/phone_hand.png'),
             ),
+            Spacer(),
             Text(
               'Enter Your Mobile Number',
               style: TextStyle(
@@ -104,8 +153,40 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(
-              height: 25,
+              height: 40,
             ),
+            GestureDetector(
+              onTap: () {
+                if (phoneController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Please enter your Phone Number"),
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    loading = true;
+                  });
+
+                  verifyPhoneNumber(phoneController.text, context);
+                }
+              },
+              child: loading
+                  ? Container(
+                      height: 50,
+                      width: screenWidth,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : CustomButton(
+                      text: 'Next',
+                      height: 50,
+                      width: screenWidth,
+                      backgroundColor: Colors.green,
+                    ),
+            ),
+            Spacer(),
           ],
         ),
       ),
