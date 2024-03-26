@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:garbagecl/providers/user_provider.dart';
 import 'package:garbagecl/widgets/custom_textfild.dart';
 import 'package:garbagecl/widgets/user_info_card.dart';
+import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
 class UserProfile extends StatefulWidget {
@@ -113,28 +114,39 @@ class _UserProfileState extends State<UserProfile> {
                                             ),
                                           );
                                         } else {
-                                          try {
-                                            db
-                                                .collection("Numbers")
-                                                .doc(userProvider.userID)
-                                                .update({
-                                              'number': bioController.text,
-                                            });
+                                          if (bioController.text.length < 10) {
+                                            Navigator.of(ctx).pop();
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
-                                                content:
-                                                    Text("Sucessfully Added"),
+                                                content: Text(
+                                                    "Please Enter a Valid Number"),
                                               ),
                                             );
-                                            setState(() {
-                                              bioAdded = true;
-                                            });
-                                          } catch (e) {
-                                            print(e);
-                                          } finally {
-                                            Navigator.of(ctx).pop();
-                                            userProvider.getUserData(context);
+                                          } else {
+                                            try {
+                                              db
+                                                  .collection("Numbers")
+                                                  .doc(userProvider.userID)
+                                                  .update({
+                                                'number': bioController.text,
+                                              });
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content:
+                                                      Text("Sucessfully Added"),
+                                                ),
+                                              );
+                                              setState(() {
+                                                bioAdded = true;
+                                              });
+                                            } catch (e) {
+                                              print(e);
+                                            } finally {
+                                              Navigator.of(ctx).pop();
+                                              userProvider.getUserData(context);
+                                            }
                                           }
                                         }
                                       },
